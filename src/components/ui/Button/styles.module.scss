@@ -1,6 +1,6 @@
 .button{
-    max-width: 100px;
-    background-color: var(--dark-700);
+    max-width: 501px;
+    background-color: var(--dark-900);
     border: 0;
     padding: 0.4rem;
     color: var(--white);
@@ -27,5 +27,17 @@
         transform: rotate(0deg);
     }to{
         transform: rotate(360deg);
+    }
+}
+
+.text{
+    margin-top: 1rem;
+    color: var(--white);
+    cursor: pointer;
+}
+
+@media (max-width: 620px){
+    .login{
+        width: 100%;
     }
 }

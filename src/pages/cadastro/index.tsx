@@ -1,33 +1,36 @@
 import Head from 'next/head'
 import Image from 'next/image';
-import styles from '../../styles/home.module.scss';
+import styles from '../../../styles/home.module.scss';
 
-import logoImg from '../../public/logo3.png'
+import logoImg from '../../../public/logo3.png'
 
-import { Input } from '../components/ui/Input'
-import { Button } from '../components/ui/Button'
+import { Input } from '../../components/ui/Input'
+import { Button } from '../../components/ui/Button'
 
 import Link from 'next/link'
 
-export default function Home() {
+export default function Cadastro() {
   return (
     <>
       <Head>
-        <title>FocusCourses - Bem vindo ao login!</title>
+        <title>Cadastro</title>
       </Head>
       <div className={styles.containerCenter}>
         <Image src={logoImg} alt="Logo FocusCourse" />
 
         <div className={styles.login}>
+            <h1>Criando sua conta</h1>
           <form>
+          <Input  placeholder='Digite seu nome ' type="text"/>
             <Input placeholder='Digite seu e-mail' type="text" />
             <Input placeholder='Digite sua senha' type="password" />
+            
             <Button type="submit" loading={false}>
-              Acessar
+              Cadastrar
             </Button>
           </form>
-          <Link href={'/cadastro'}>
-            <a className={styles.text}>Não possui conta? Clique aqui</a>
+          <Link href={'/'}>
+            <a className={styles.text}>Já possui uma conta? Faça seu login</a>
           </Link>
         </div>
       </div>
