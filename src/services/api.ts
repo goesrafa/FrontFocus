@@ -10,7 +10,7 @@ export function setupAPIClient(ctx = undefined){
     const api = axios.create({
         baseURL: 'http://localhost:3333',
         headers: {
-            Autorization: `Bearer ${cookies['@tocourses.token']}`
+            Authorization: `Bearer ${cookies['@tocourses.token']}`
         }
     })
     
