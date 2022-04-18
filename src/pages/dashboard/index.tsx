@@ -1,10 +1,20 @@
 import { canSSRAuth } from "../../utils/canSSRAuth"
+import Head from "next/head"
+
+import {Header} from '../../components/Header'
 
 export default function  Dashboard(){
     return(
+        <>
+        <Head>
+            <title>ToFocusCourses</title>
+        </Head>
         <div>
-            <h1>Bem vindo ao ToFocus</h1>
+            <Header />
+            
+            <h1>ToFocus</h1>
         </div>
+        </>
     )
 }
 
