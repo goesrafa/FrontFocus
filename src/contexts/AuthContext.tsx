@@ -1,11 +1,12 @@
-import { createContext, ReactNode, useState } from 'react'
+import { createContext, ReactNode, useState, useEffect } from 'react'
 
-import {api } from '../services/apiClient'
-import {destroyCookie, setCookie, parseCookies} from 'nookies'
+import { api } from '../services/apiClient'
+import { destroyCookie, setCookie, parseCookies } from 'nookies'
 
 import Router from 'next/router'
 
-import { toast} from 'react-toastify'
+import { toast } from 'react-toastify'
+import { responseSymbol } from 'next/dist/server/web/spec-compliant/fetch-event'
 
 
 type AuthContextData = {
@@ -39,7 +40,7 @@ type AuthProviderProps = {
 
 export const AuthContext = createContext({} as AuthContextData)
 
-export function signOut(){
+export function signOut() {
     try {
         destroyCookie(undefined, '@tocourses.token')
         Router.push('/')
@@ -52,19 +53,40 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<UserProps>()
     const isAuthenticated = !!user
 
-    async function signIn({email, password} :SigInProps ) {
-       try {
-            const response  = await api.post('/login', {
+    useEffect(() => {
+        //pegamdo algo no cookie
+        const { '@tocourses.token': token } = parseCookies()
+
+        if(token){
+            api.get('/info').then(response => {
+                const {id, name, email} = response.data
+
+                setUser({
+                    id,
+                    name,
+                    email
+                })
+            })
+            .catch(() =>{
+                //Deslogando o usuário caso de algum erro
+                signOut()
+            })
+        }
+    }, [])
+
+    async function signIn({ email, password }: SigInProps) {
+        try {
+            const response = await api.post('/login', {
                 email,
                 password
             })
 
             //console.log(response.data)
 
-            const {id, name, token} = response.data
+            const { id, name, token } = response.data
 
             setCookie(undefined, ' @tocourses.token', token, {
-                maxAge: 60 * 60 * 24 * 30 ,//expiração em 1 mês
+                maxAge: 60 * 60 * 24 * 30,//expiração em 1 mês
                 path: "/" //caminhos com acesso ao cookie
             })
 
@@ -80,14 +102,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
             //Redirecionando para o /dashboard
             Router.push('/dashboard')
 
-       } catch (err){
-           toast.error("Erro ao acessar")
+        } catch (err) {
+            toast.error("Erro ao acessar")
             console.log("erro ao acessasr", err)
-       }
+        }
     }
 
-    async function  signUp({name, email, password} : SignUpProps) {
-        try{
+    async function signUp({ name, email, password }: SignUpProps) {
+        try {
             const response = await api.post('/users', {
                 name,
                 email,
@@ -96,8 +118,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
             toast.success('Cadastro feito com sucesso!!')
 
             Router.push('/')
-            
-        }catch(err){
+
+        } catch (err) {
             toast.error("Erro ao cadstrar")
             console.log("erro ao cadastrar", err)
         }
