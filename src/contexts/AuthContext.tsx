@@ -2,13 +2,18 @@ import { createContext, ReactNode, useState } from 'react'
 
 import {api } from '../services/apiClient'
 import {destroyCookie, setCookie, parseCookies} from 'nookies'
+
 import Router from 'next/router'
+
+import { toast} from 'react-toastify'
+
 
 type AuthContextData = {
     user: UserProps;
     isAuthenticated: boolean;
     signIn: (credentials: SigInProps) => Promise<void>
     signOut: () => void
+    signUp: (credentials: SignUpProps) => void
 }
 
 type UserProps = {
@@ -20,6 +25,12 @@ type UserProps = {
 type SigInProps = {
     email: string;
     password: string
+}
+
+type SignUpProps = {
+    name: string;
+    email: string;
+    password: string;
 }
 
 type AuthProviderProps = {
@@ -64,16 +75,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
             //Passar para as outras reuisições o token
             api.defaults.headers['Authorization'] = `Bearer ${token}`
 
+            toast.success('Bem vindo ao ToCourses!')
+
             //Redirecionando para o /dashboard
             Router.push('/dashboard')
 
        } catch (err){
+           toast.error("Erro ao acessar")
             console.log("erro ao acessasr", err)
        }
     }
 
+    async function  signUp({name, email, password} : SignUpProps) {
+        try{
+            const response = await api.post('/users', {
+                name,
+                email,
+                password
+            })
+            toast.success('Cadastro feito com sucesso!!')
+
+            Router.push('/')
+            
+        }catch(err){
+            toast.error("Erro ao cadstrar")
+            console.log("erro ao cadastrar", err)
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, signIn, signOut }}>
+        <AuthContext.Provider value={{ user, isAuthenticated, signIn, signOut, signUp }}>
             {children}
         </AuthContext.Provider>
     )
